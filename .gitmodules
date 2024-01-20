@@ -1,0 +1,3 @@
+[submodule "ext/GraphicsUtils"]
+	path = ext/GraphicsUtils
+	url = git@github.com:Lehdari/GraphicsUtils.git
