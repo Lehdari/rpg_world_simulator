@@ -14,8 +14,10 @@
 World::World() :
     _size   (10.0)
 {
-    _npcs.emplace_back(Vec2f(0.0f, 0.0f));
-    _npcs.emplace_back(Vec2f(2.0f, 0.0f));
+    constexpr int nNPCs = 8;
+    for (int i=0; i<nNPCs; ++i) {
+        _npcs.emplace_back(Vec2f(5.0*cos(2.0*M_PI*((float)i/nNPCs)), 5.0*sin(2.0*M_PI*((float)i/nNPCs))));
+    }
 }
 
 void World::update()

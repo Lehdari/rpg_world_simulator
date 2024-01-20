@@ -34,4 +34,5 @@ private:
     Orientation _orientation;
     Sprite      _sprite;
     double      _speed;
+    Vec2f       _velocity; // computed from _orientation and _speed
 };
