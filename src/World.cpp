@@ -22,6 +22,8 @@ void World::update()
 {
     for (auto& npc : _npcs)
         npc.update(this);
+
+    checkCollisions();
 }
 
 void World::render(SpriteRenderer* renderer)
@@ -33,4 +35,20 @@ void World::render(SpriteRenderer* renderer)
 double World::getSize() const
 {
     return _size;
+}
+
+void World::checkCollisions()
+{
+    for (decltype(_npcs)::size_type i=0; i<_npcs.size(); ++i) {
+        auto& npc1 = _npcs[i];
+        for (decltype(_npcs)::size_type j=0; j<_npcs.size(); ++j) {
+            if (j >= i) continue;
+            auto& npc2 = _npcs[j];
+
+            if (npc1._orientation.checkCollision(npc2._orientation)) {
+                npc1.collision(this, npc2);
+                npc2.collision(this, npc1);
+            }
+        }
+    }
 }

@@ -24,7 +24,11 @@ public:
 
     void update(World* world);
 
+    void collision(World* world, const NPC& other);
+
     void render(SpriteRenderer* renderer);
+
+    friend class World;
 
 private:
     Orientation _orientation;
