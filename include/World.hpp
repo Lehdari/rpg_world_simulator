@@ -23,6 +23,10 @@ public:
     void update();
     void render(SpriteRenderer* renderer);
 
+    double getSize() const;
+
 private:
+    double              _size;  // radius around origin
+
     std::vector<NPC>    _npcs;
 };

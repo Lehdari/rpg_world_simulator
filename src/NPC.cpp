@@ -10,6 +10,7 @@
 
 #include "NPC.hpp"
 #include "SpriteRenderer.hpp"
+#include "World.hpp"
 
 #include <algorithm>
 
@@ -23,15 +24,25 @@ NPC::NPC(const Vec2f& position)
     _sprite.setOrigin(Vec2f(64.0f, 64.0f));
     _sprite.setScale(Vec2f(1.0f/64.0f, 1.0f/64.0f));
 
-    _speed = rnd(-0.001, 0.01);
+    _speed = rnd(-0.002, 0.02);
 }
 
-void NPC::update()
+void NPC::update(World* world)
 {
-    _speed = std::clamp(_speed+rnd(-0.0001, 0.001), -0.002, 0.02);
-
-    _orientation.translate((_orientation.getOrientation() * Vec3f(_speed, 0.0f, 0.0f)).block<2,1>(0,0));
+    // Random movement (for now)
+    _speed = std::clamp(_speed+rnd(-0.0001, 0.001), -0.005, 0.05);
     _orientation.rotate(rnd(-0.01, 0.01));
+
+    // Collision check with world boundary
+    auto& position = _orientation.getPosition();
+    if (position.squaredNorm() >= world->getSize()*world->getSize()) {
+        _orientation.setRotation(atan2f(-position(1), -position(0))); // turn towards origin
+        if (_speed <= 0.0)
+            _speed = 0.001; // force forward movement
+    }
+
+    // Move
+    _orientation.translate((_orientation.getOrientation() * Vec3f((float)_speed, 0.0f, 0.0f)).block<2,1>(0,0));
 }
 
 void NPC::render(SpriteRenderer* renderer)

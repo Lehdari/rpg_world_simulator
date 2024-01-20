@@ -15,13 +15,14 @@
 
 
 class SpriteRenderer;
+class World;
 
 
 class NPC {
 public:
     NPC(const Vec2f& position);
 
-    void update();
+    void update(World* world);
 
     void render(SpriteRenderer* renderer);
 

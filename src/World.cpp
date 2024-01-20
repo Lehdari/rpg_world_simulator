@@ -11,7 +11,8 @@
 #include "World.hpp"
 
 
-World::World()
+World::World() :
+    _size   (10.0)
 {
     _npcs.emplace_back(Vec2f(0.0f, 0.0f));
     _npcs.emplace_back(Vec2f(2.0f, 0.0f));
@@ -20,11 +21,16 @@ World::World()
 void World::update()
 {
     for (auto& npc : _npcs)
-        npc.update();
+        npc.update(this);
 }
 
 void World::render(SpriteRenderer* renderer)
 {
     for (auto& npc : _npcs)
         npc.render(renderer);
+}
+
+double World::getSize() const
+{
+    return _size;
 }
