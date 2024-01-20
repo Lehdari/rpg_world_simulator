@@ -31,7 +31,7 @@ public:
     float getScale() const;
     const Mat3f& getOrientation() const;
 
-    bool checkCollision(const Orientation& orientation) const;
+    bool checkCollision(const Orientation& other) const;
 
 private:
     Vec2f   _position;
