@@ -85,6 +85,12 @@ const Mat3f& Orientation::getOrientation() const
     return _orientation;
 }
 
+bool Orientation::checkCollision(const Orientation& orientation) const
+{
+    // TODO collision
+    return false;
+}
+
 void Orientation::updateOrientation()
 {
     _orientation <<

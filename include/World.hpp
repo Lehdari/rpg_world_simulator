@@ -29,4 +29,6 @@ private:
     double              _size;  // radius around origin
 
     std::vector<NPC>    _npcs;
+
+    void checkCollisions();
 };
