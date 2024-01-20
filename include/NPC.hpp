@@ -24,7 +24,7 @@ public:
 
     void update(World* world);
 
-    void collision(World* world, const NPC& other);
+    void collision(World* world, NPC* other);
 
     void render(SpriteRenderer* renderer);
 

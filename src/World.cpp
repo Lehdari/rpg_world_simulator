@@ -46,8 +46,7 @@ void World::checkCollisions()
             auto& npc2 = _npcs[j];
 
             if (npc1._orientation.checkCollision(npc2._orientation)) {
-                npc1.collision(this, npc2);
-                npc2.collision(this, npc1);
+                npc1.collision(this, &npc2);
             }
         }
     }

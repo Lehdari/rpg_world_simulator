@@ -45,7 +45,7 @@ void NPC::update(World* world)
     _orientation.translate((_orientation.getOrientation() * Vec3f((float)_speed, 0.0f, 0.0f)).block<2,1>(0,0));
 }
 
-void NPC::collision(World* world, const NPC& other)
+void NPC::collision(World* world, NPC* other)
 {
     // TODO
 }
