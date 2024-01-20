@@ -14,12 +14,13 @@
 World::World()
 {
     _npcs.emplace_back(Vec2f(0.0f, 0.0f));
-    _npcs.emplace_back(Vec2f(100.0f, 0.0f));
+    _npcs.emplace_back(Vec2f(2.0f, 0.0f));
 }
 
 void World::update()
 {
-
+    for (auto& npc : _npcs)
+        npc.update();
 }
 
 void World::render(SpriteRenderer* renderer)

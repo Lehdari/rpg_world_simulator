@@ -21,9 +21,12 @@ class NPC {
 public:
     NPC(const Vec2f& position);
 
+    void update();
+
     void render(SpriteRenderer* renderer);
 
 private:
     Orientation _orientation;
     Sprite      _sprite;
+    double      _speed;
 };

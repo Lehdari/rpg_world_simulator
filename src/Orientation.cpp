@@ -54,6 +54,8 @@ void Orientation::translate(const Vec2f& translation)
 void Orientation::rotate(float rotation)
 {
     _rotation += rotation;
+    _rotSin = std::sin(_rotation);
+    _rotCos = std::cos(_rotation);
     updateOrientation();
 }
 

@@ -19,6 +19,7 @@ Sprite::Sprite(SpriteSheetId sheetId, int spriteId) :
     _spriteId       (spriteId),
     _origin         (0.0f, 0.0f),
     _color          (1.0f, 1.0f, 1.0f),
+    _scale          (1.0f, 1.0f),
     _positions      {Vec3f(0.0f, 0.0f, 1.0f)},
     _texCoords      {Vec2f(0.0f, 0.0f)}
 {
@@ -48,6 +49,12 @@ void Sprite::setColor(const Vec3f& color)
     _dirty = true;
 }
 
+void Sprite::setScale(const Vec2f& scale)
+{
+    _scale = scale;
+    _dirty = true;
+}
+
 SpriteSheetId Sprite::getSpriteSheet() const
 {
     return _spriteSheetId;
@@ -66,6 +73,11 @@ const Vec2f& Sprite::getOrigin() const
 const Vec3f& Sprite::getColor() const
 {
     return _color;
+}
+
+const Vec2f& Sprite::getScale() const
+{
+    return _scale;
 }
 
 void Sprite::render(SpriteRenderer* renderer, const Orientation& orientation)
@@ -91,7 +103,11 @@ void Sprite::render(SpriteRenderer* renderer, const Orientation& orientation)
     }
 
     auto& vertexPositions = renderer->_spriteVertexPositions[_spriteSheetId];
-    auto& orientationMatrix = orientation.getOrientation();
+    Mat3f orientationMatrix = orientation.getOrientation();
+    orientationMatrix(0,0) *= _scale(0);
+    orientationMatrix(1,0) *= _scale(0);
+    orientationMatrix(0,1) *= _scale(1);
+    orientationMatrix(1,1) *= _scale(1);
     vertexPositions.emplace_back((orientationMatrix * _positions[0]).block<2,1>(0,0));
     vertexPositions.emplace_back((orientationMatrix * _positions[1]).block<2,1>(0,0));
     vertexPositions.emplace_back((orientationMatrix * _positions[3]).block<2,1>(0,0));

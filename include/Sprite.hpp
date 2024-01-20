@@ -28,11 +28,13 @@ public:
     void setSpriteId(int spriteId);
     void setOrigin(const Vec2f& origin);
     void setColor(const Vec3f& color);
+    void setScale(const Vec2f& scale);
 
     SpriteSheetId getSpriteSheet() const;
     int getSprite() const;
     const Vec2f& getOrigin() const;
     const Vec3f& getColor() const;
+    const Vec2f& getScale() const;
 
     void render(SpriteRenderer* renderer, const Orientation& orientation);
 
@@ -44,6 +46,7 @@ private:
     int             _spriteId;
     Vec2f           _origin;
     Vec3f           _color;
+    Vec2f           _scale;
     Vec3f           _positions[4]; // homogeneous vector
     Vec2f           _texCoords[4];
 };
