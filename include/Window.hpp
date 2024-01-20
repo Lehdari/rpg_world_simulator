@@ -100,17 +100,9 @@ public:
     ~Window();
 
     void init(void);
-
     void loop(void);
-
     void handleEvent(SDL_Event& event);
-
     void updateGUI();
-
-    // world step function (food creation etc.)
-    void updateWorld(void);
-
-    void addEntitiesToWorld(void);
 
 private:
     Settings            _settings;

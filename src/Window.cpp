@@ -9,7 +9,7 @@
 //
 
 #include <Window.hpp>
-//#include <Utils.hpp>
+#include <FileUtils.hpp>
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
 #include "backends/imgui_impl_sdl2.h"
@@ -104,57 +104,19 @@ Window::~Window()
 
 void Window::init(void)
 {
-#if 0
-    _ecs.getSingleton<fug::SpriteSingleton>()->init();
-    _ecs.getSingleton<fug::SpriteSingleton>()->setWindowSize(
-        (int)_settings.window.width, (int)_settings.window.height);
-    _spriteSheetId = _spriteRenderer->addSpriteSheetFromFile(assetsDir / "sprites/sprites.png", 128, 128);
+    _spriteRenderer.init();
+    _spriteRenderer.setWindowSize((int)_settings.window.width, (int)_settings.window.height);
+    _spriteSheetId = _spriteRenderer.addSpriteSheetFromFile(assetsDir / "sprites/sprites.png", 128, 128);
 
-    _ecs.getSingleton<LineSingleton>()->init();
-    _ecs.getSingleton<LineSingleton>()->setWindowSize(
-        (int)_settings.window.width, (int)_settings.window.height);
-
-    _ecs.getSingleton<ResourceSingleton>()->init(_spriteSheetId);
-    _ecs.getSingleton<MapSingleton>();
-
-    fug::SpriteComponent creatureSpriteComponent(_spriteSheetId, 0);
-    creatureSpriteComponent.setOrigin(Vec2f(ConfigSingleton::spriteRadius, ConfigSingleton::spriteRadius));
-    fug::SpriteComponent foodSpriteComponent(_spriteSheetId, 1);
-    foodSpriteComponent.setOrigin(Vec2f(ConfigSingleton::spriteRadius, ConfigSingleton::spriteRadius));
-    foodSpriteComponent.setColor(Vec3f(0.2f, 0.6f, 0.0f));
-
-    auto& config = *_ecs.getSingleton<ConfigSingleton>();
-    auto& map = *_ecs.getSingleton<MapSingleton>();
-
-    // Create creatures
-    constexpr int nCreatures = 2000;
-    for (int i=0; i<nCreatures; ++i) {
-        // get position using rejection sampling
-        Vec2f p(RNDS*1024.0f, RNDS*1024.0f);
-        while (gauss2(p, 256.0f) < RND)
-            p << RNDS*1024.0f, RNDS*1024.0f;
-
-        double mass = ConfigSingleton::minCreatureMass + RND*(
-            ConfigSingleton::maxCreatureMass-ConfigSingleton::minCreatureMass);
-
-        createCreature(_ecs, Genome(), mass, 1.0, p, RND*M_PI*2.0f, RND);
-    }
-
-    // Create food
-    constexpr int nFoods = 5000;
-    auto foodPositions = map.sampleFertility(nFoods);
-    for (auto& p : foodPositions) {
-        double mass = RNDRANGE(ConfigSingleton::minFoodMass, ConfigSingleton::maxFoodMass);
-        createFood(_ecs, FoodComponent::Type::PLANT, mass, p);
-    }
-#endif
+//    fug::SpriteComponent creatureSpriteComponent(_spriteSheetId, 0);
+//    creatureSpriteComponent.setOrigin(Vec2f(ConfigSingleton::spriteRadius, ConfigSingleton::spriteRadius));
+//    fug::SpriteComponent foodSpriteComponent(_spriteSheetId, 1);
+//    foodSpriteComponent.setOrigin(Vec2f(ConfigSingleton::spriteRadius, ConfigSingleton::spriteRadius));
+//    foodSpriteComponent.setColor(Vec3f(0.2f, 0.6f, 0.0f));
 }
 
 void Window::loop(void)
 {
-//    auto& map = *_ecs.getSingleton<MapSingleton>();
-//    auto& config = *_ecs.getSingleton<ConfigSingleton>();
-
     uint32_t frameId = 0;
 
     // Application main loop
@@ -170,7 +132,7 @@ void Window::loop(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (!_paused)
-            updateWorld();
+//            updateWorld();
 
 //        _creatureSystem.setStage(CreatureSystem::Stage::PROCESS_INPUTS);
 //        _ecs.runSystem(_creatureSystem);
@@ -189,9 +151,6 @@ void Window::loop(void)
         SDL_GL_SwapWindow(_window);
 
         if (!_paused) {
-            // Map update (GPGPU pass)
-//            map.simulateWeather(frameId, config);
-//            map.diffuseFertility();
             ++frameId;
         }
 
@@ -264,9 +223,3 @@ void Window::updateGUI()
     ImGui::Begin("Simulation Controls");
     ImGui::End();
 }
-
-void Window::updateWorld(void)
-{
-
-}
-
