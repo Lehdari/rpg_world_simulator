@@ -132,7 +132,7 @@ void Window::loop(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (!_paused)
-//            updateWorld();
+            _world.update();
 
 //        _creatureSystem.setStage(CreatureSystem::Stage::PROCESS_INPUTS);
 //        _ecs.runSystem(_creatureSystem);
@@ -140,7 +140,7 @@ void Window::loop(void)
         updateGUI();
 
         // Render world
-//        map.render(_viewport, _renderMode);
+        _world.render(&_spriteRenderer);
         _spriteRenderer.render(_viewport);
 
         // Render ImGui

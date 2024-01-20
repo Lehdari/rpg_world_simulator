@@ -16,9 +16,13 @@
 #include <gut_utils/MathUtils.hpp>
 
 
+class SpriteRenderer;
+class Orientation;
+
+
 class Sprite {
 public:
-    Sprite(SpriteSheetId sheetId = 0, int spriteId = -1);
+    Sprite(SpriteSheetId sheetId = 0, int spriteId = 0);
 
     void setSpriteSheet(SpriteSheetId sheetId);
     void setSpriteId(int spriteId);
@@ -30,7 +34,9 @@ public:
     const Vec2f& getOrigin() const;
     const Vec3f& getColor() const;
 
-    friend class SpriteSystem;
+    void render(SpriteRenderer* renderer, const Orientation& orientation);
+
+    friend class SpriteRenderer;
 
 private:
     bool            _dirty;

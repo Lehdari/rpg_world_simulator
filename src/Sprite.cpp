@@ -9,6 +9,8 @@
 //
 
 #include "Sprite.hpp"
+#include "SpriteRenderer.hpp"
+#include "Orientation.hpp"
 
 
 Sprite::Sprite(SpriteSheetId sheetId, int spriteId) :
@@ -64,4 +66,52 @@ const Vec2f& Sprite::getOrigin() const
 const Vec3f& Sprite::getColor() const
 {
     return _color;
+}
+
+void Sprite::render(SpriteRenderer* renderer, const Orientation& orientation)
+{
+    if (_dirty) {
+        auto& spriteSheet = renderer->_spriteSheets[_spriteSheetId];
+        int sw, sh;
+        float uvLeft, uvRight, uvTop, uvBottom;
+        spriteSheet.getDimensions(_spriteId, sw, sh);
+        spriteSheet.getUVCoordinates(_spriteId, uvLeft, uvRight, uvTop, uvBottom);
+
+        _positions[0] << -_origin(0), -_origin(1), 1.0f;
+        _positions[1] << sw-_origin(0), -_origin(1), 1.0f;
+        _positions[2] << sw-_origin(0), sh-_origin(1), 1.0f;
+        _positions[3] << -_origin(0), sh-_origin(1), 1.0f;
+
+        _texCoords[0] << uvLeft, uvTop;
+        _texCoords[1] << uvRight, uvTop;
+        _texCoords[2] << uvRight, uvBottom;
+        _texCoords[3] << uvLeft, uvBottom;
+
+        _dirty = false;
+    }
+
+    auto& vertexPositions = renderer->_spriteVertexPositions[_spriteSheetId];
+    auto& orientationMatrix = orientation.getOrientation();
+    vertexPositions.emplace_back((orientationMatrix * _positions[0]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * _positions[1]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * _positions[3]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * _positions[3]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * _positions[1]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * _positions[2]).block<2,1>(0,0));
+
+    auto& vertexTexCoords = renderer->_spriteVertexTexCoords[_spriteSheetId];
+    vertexTexCoords.emplace_back(_texCoords[0]);
+    vertexTexCoords.emplace_back(_texCoords[1]);
+    vertexTexCoords.emplace_back(_texCoords[3]);
+    vertexTexCoords.emplace_back(_texCoords[3]);
+    vertexTexCoords.emplace_back(_texCoords[1]);
+    vertexTexCoords.emplace_back(_texCoords[2]);
+
+    auto& vertexColors = renderer->_spriteVertexColors[_spriteSheetId];
+    vertexColors.emplace_back(_color);
+    vertexColors.emplace_back(_color);
+    vertexColors.emplace_back(_color);
+    vertexColors.emplace_back(_color);
+    vertexColors.emplace_back(_color);
+    vertexColors.emplace_back(_color);
 }

@@ -45,14 +45,13 @@ void SpriteSheet::loadFromFile(
     _nSpritesY = _texture.height() / _spriteHeight;
 }
 
-void SpriteSheet::getDimensions(int spriteId, int& spriteWidth, int& spriteHeight)
+void SpriteSheet::getDimensions(int spriteId, int& spriteWidth, int& spriteHeight) const
 {
     spriteWidth = _spriteWidth;
     spriteHeight = _spriteHeight;
 }
 
-void SpriteSheet::getUVCoordinates(int spriteId,
-    float& left, float& right, float& top, float& bottom)
+void SpriteSheet::getUVCoordinates(int spriteId, float& left, float& right, float& top, float& bottom) const
 {
     int spriteIdX = spriteId % _nSpritesX;
     int spriteIdY = spriteId / _nSpritesX;

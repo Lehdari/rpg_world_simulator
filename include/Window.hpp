@@ -13,6 +13,7 @@
 
 #include <Viewport.hpp>
 #include <SpriteRenderer.hpp>
+#include <World.hpp>
 #include <string>
 #include <SDL.h>
 #include <glad/glad.h>
@@ -121,6 +122,7 @@ private:
     Window::Context     _windowContext;
 
     SpriteRenderer      _spriteRenderer;
+    World               _world;
 
     // Resources
     SpriteSheetId       _spriteSheetId;

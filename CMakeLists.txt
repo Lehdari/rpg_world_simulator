@@ -7,11 +7,15 @@ add_subdirectory(ext)
 
 set(RPG_WORLD_SIMULATOR_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/FileUtils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Orientation.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/NPC.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Sprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/SpriteRenderer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/SpriteSheet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Viewport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Window.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/World.cpp
 )
 
 

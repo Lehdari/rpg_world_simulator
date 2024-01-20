@@ -41,7 +41,7 @@ public:
     // Clear sprite memory without rendering;
     void clear();
 
-    friend class SpriteSystem;
+    friend class Sprite;
 
 private:
     std::vector<SpriteSheet>    _spriteSheets;

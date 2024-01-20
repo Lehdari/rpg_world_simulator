@@ -32,14 +32,14 @@ public:
     void getDimensions(
         int spriteId,
         int& spriteWidth,
-        int& spriteHeight);
+        int& spriteHeight) const;
 
     void getUVCoordinates(
         int spriteId,
         float& left,
         float& right,
         float& top,
-        float& bottom);
+        float& bottom) const;
 
     friend class SpriteRenderer;
 
