@@ -12,15 +12,16 @@
 
 #include "Orientation.hpp"
 #include "Sprite.hpp"
+#include "Entity.hpp"
 
 
 class SpriteRenderer;
 class World;
 
 
-class NPC {
+class NPC : public Entity<Orientation, Sprite> {
 public:
-    NPC(const Vec2f& position);
+    NPC(EntityType&& entity, const Vec2f& position);
 
     void update(World* world);
 
@@ -31,8 +32,6 @@ public:
     friend class World;
 
 private:
-    Orientation _orientation;
-    Sprite      _sprite;
     double      _speed;
     Vec2f       _velocity; // computed from _orientation and _speed
 };

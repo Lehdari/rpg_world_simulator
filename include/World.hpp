@@ -10,8 +10,10 @@
 
 #pragma once
 
-#include "NPC.hpp"
+#include "Components.hpp"
+#include "ComponentPool.hpp"
 #include "SpriteRenderer.hpp"
+#include "NPC.hpp"
 
 #include <vector>
 
@@ -26,9 +28,10 @@ public:
     double getSize() const;
 
 private:
-    double              _size;  // radius around origin
+    double                          _size;  // radius around origin
 
-    std::vector<NPC>    _npcs;
+    ComponentPool<COMPONENT_TYPES>  _componentPool;
+    std::vector<NPC>                _npcs;
 
     void checkCollisions();
 };
