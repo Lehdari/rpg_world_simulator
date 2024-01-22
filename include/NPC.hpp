@@ -27,8 +27,6 @@ public:
 
     void collision(World* world, NPC* other);
 
-    void render(SpriteRenderer* renderer);
-
     friend class World;
 
 private:

@@ -9,6 +9,8 @@
 //
 
 #include "SpriteRenderer.hpp"
+#include "Sprite.hpp"
+#include "Orientation.hpp"
 #include "FileUtils.hpp"
 
 #include <gut_opengl/Texture.hpp>
@@ -61,6 +63,11 @@ SpriteSheetId SpriteRenderer::addSpriteSheetFromFile(
     return _spriteSheets.size()-1;
 }
 
+const SpriteSheet& SpriteRenderer::getSpriteSheet(SpriteSheetId id) const
+{
+    return _spriteSheets[id];
+}
+
 void SpriteRenderer::setWindowSize(int windowWidth, int windowHeight)
 {
     _windowWidth = windowWidth;
@@ -109,6 +116,40 @@ void SpriteRenderer::render(const Mat3f& viewport)
         vertexTexCoords.clear();
         vertexColors.clear();
     }
+}
+
+void SpriteRenderer::operator()(Sprite& sprite, Orientation& orientation)
+{
+    sprite.update(*this);
+
+    auto& vertexPositions = _spriteVertexPositions[sprite._spriteSheetId];
+    Mat3f orientationMatrix = orientation.getOrientation();
+    orientationMatrix(0,0) *= sprite._scale(0);
+    orientationMatrix(1,0) *= sprite._scale(0);
+    orientationMatrix(0,1) *= sprite._scale(1);
+    orientationMatrix(1,1) *= sprite._scale(1);
+    vertexPositions.emplace_back((orientationMatrix * sprite._positions[0]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * sprite._positions[1]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * sprite._positions[3]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * sprite._positions[3]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * sprite._positions[1]).block<2,1>(0,0));
+    vertexPositions.emplace_back((orientationMatrix * sprite._positions[2]).block<2,1>(0,0));
+
+    auto& vertexTexCoords = _spriteVertexTexCoords[sprite._spriteSheetId];
+    vertexTexCoords.emplace_back(sprite._texCoords[0]);
+    vertexTexCoords.emplace_back(sprite._texCoords[1]);
+    vertexTexCoords.emplace_back(sprite._texCoords[3]);
+    vertexTexCoords.emplace_back(sprite._texCoords[3]);
+    vertexTexCoords.emplace_back(sprite._texCoords[1]);
+    vertexTexCoords.emplace_back(sprite._texCoords[2]);
+
+    auto& vertexColors = _spriteVertexColors[sprite._spriteSheetId];
+    vertexColors.emplace_back(sprite._color);
+    vertexColors.emplace_back(sprite._color);
+    vertexColors.emplace_back(sprite._color);
+    vertexColors.emplace_back(sprite._color);
+    vertexColors.emplace_back(sprite._color);
+    vertexColors.emplace_back(sprite._color);
 }
 
 void SpriteRenderer::clear()

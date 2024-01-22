@@ -17,7 +17,6 @@
 
 
 class SpriteRenderer;
-class Orientation;
 
 
 class Sprite {
@@ -36,7 +35,8 @@ public:
     const Vec3f& getColor() const;
     const Vec2f& getScale() const;
 
-    void render(SpriteRenderer* renderer, const Orientation& orientation);
+    // Updates changes made and cleans dirty flag, should be called before rendering
+    void update(const SpriteRenderer& renderer);
 
     friend class SpriteRenderer;
 

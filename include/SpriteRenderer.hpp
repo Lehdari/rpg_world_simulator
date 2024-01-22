@@ -16,6 +16,10 @@
 #include <gut_opengl/Shader.hpp>
 
 
+class Orientation;
+class Sprite;
+
+
 class SpriteRenderer {
 public:
     SpriteRenderer();
@@ -33,15 +37,16 @@ public:
         const std::string& fileName,
         int spriteWidth,
         int spriteHeight);
+    const SpriteSheet& getSpriteSheet(SpriteSheetId id) const;
 
     void setWindowSize(int windowWidth, int windowHeight);
 
     void render(const Mat3f& viewport = Mat3f::Identity());
 
+    void operator()(Sprite& sprite, Orientation& orientation);
+
     // Clear sprite memory without rendering;
     void clear();
-
-    friend class Sprite;
 
 private:
     std::vector<SpriteSheet>    _spriteSheets;

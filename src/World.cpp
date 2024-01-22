@@ -32,8 +32,7 @@ void World::update()
 
 void World::render(SpriteRenderer* renderer)
 {
-    for (auto& npc : _npcs)
-        npc.render(renderer);
+    _componentPool.runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
 }
 
 double World::getSize() const

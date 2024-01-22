@@ -81,8 +81,3 @@ void NPC::collision(World* world, NPC* other)
         other->component<Orientation>().setRotation(atan2f(otherNewVelocity(1), otherNewVelocity(0)));
     }
 }
-
-void NPC::render(SpriteRenderer* renderer)
-{
-    component<Sprite>().render(renderer, component<Orientation>());
-}

@@ -30,3 +30,4 @@ target_compile_definitions(rpg_world_simulator
     PUBLIC  SHADER_DIR="\"\"${CMAKE_CURRENT_SOURCE_DIR}/shaders/\"\""
     PUBLIC  ASSETS_DIR="\"\"${CMAKE_CURRENT_SOURCE_DIR}/assets/\"\""
 )
+set_property(TARGET rpg_world_simulator PROPERTY CXX_STANDARD 20)

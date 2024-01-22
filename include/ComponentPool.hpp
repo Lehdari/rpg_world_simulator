@@ -20,6 +20,7 @@ class ComponentPool
 public:
     ComponentPool(uint64_t preallocation = 0) :
         _entityHandles      (preallocation, nullptr),
+        _componentMasks     (preallocation, 0x0000000000000000),
         _componentMovers    (preallocation, nullptr)
     {
         std::apply([this](auto&&... components) {((components.resize(_entityHandles.size())), ...);}, _components);
@@ -38,6 +39,26 @@ public:
         return entity;
     }
 
+    template <typename T_System, typename... T_SystemComponents>
+    void runSystem(T_System* system)
+    {
+        constexpr auto mask = componentMask<T_SystemComponents...>();
+        for (EntityId id=0; id<_entityHandles.size(); ++id) {
+            if ((mask & _componentMasks[id]) == mask) {
+                (*system)(std::get<std::vector<T_SystemComponents>>(_components)[id]...);
+            }
+        }
+    }
+
+    template <typename... T_MaskComponents>
+    static consteval uint64_t componentMask()
+    {
+        if constexpr (sizeof...(T_MaskComponents) > 0)
+            return (componentMaskRecurse<T_MaskComponents, T_Components...>(0) | ...);
+        else
+            return 0x0000000000000000;
+    }
+
     template <typename... T_EntityComponents>
     friend class Entity;
 
@@ -45,6 +66,7 @@ private:
     void destroyEntity(EntityId entityId)
     {
         _entityHandles[entityId] = nullptr;
+        _componentMasks[entityId] = 0x0000000000000000;
     }
 
     void moveEntity(EntityId entityId, void* newLocation)
@@ -56,6 +78,7 @@ private:
     void copyEntity(const Entity<T_EntityComponents...>& oldEntity, Entity<T_EntityComponents...>* newEntity)
     {
         newEntity->_id = findFreeEntityId();
+        _componentMasks[newEntity->_id] = componentMask<T_EntityComponents...>();
         _componentMovers[newEntity->_id] = &ComponentPool<T_Components...>::moveComponents<T_EntityComponents...>;
         copyComponent<Entity<T_EntityComponents...>, T_EntityComponents...>(oldEntity, newEntity);
         _entityHandles[newEntity->_id] = newEntity;
@@ -69,6 +92,7 @@ private:
         }
 
         _entityHandles.push_back(nullptr);
+        _componentMasks.push_back(0x0000000000000000);
         _componentMovers.push_back(nullptr);
         resizeComponentStorage(_entityHandles.size());
         return _entityHandles.size()-1;
@@ -84,6 +108,7 @@ private:
     Entity<T_EntityComponents...> constructEntity()
     {
         auto entity = Entity<T_EntityComponents...>(this, findFreeEntityId());
+        _componentMasks[entity._id] = componentMask<T_EntityComponents...>();
         _componentMovers[entity._id] = &ComponentPool<T_Components...>::moveComponents<T_EntityComponents...>;
         constructComponent<Entity<T_EntityComponents...>, T_EntityComponents...>(&entity);
         return entity;
@@ -113,15 +138,15 @@ private:
         // Resize all component vectors
         std::apply([size](auto&&... components) {((components.resize(size)), ...);}, _components);
 
-        // Reallocate all entity components
         for (EntityId id=0; id<_entityHandles.size(); ++id) {
             if (_entityHandles[id] == nullptr)
                 continue;
 
             if (_componentMovers[id] == nullptr) {
-                // TODO throw an error
+                std::runtime_error("_componentMovers[" + std::to_string(id) + "] is nullptr when resizing component storage. This is indicates a bug in ComponentPool implementation");
             }
 
+            // Reassign all entity component pointers to point to (potentially) new component locations
             (this->*_componentMovers[id])(_entityHandles[id]);
         }
     }
@@ -143,9 +168,20 @@ private:
             moveComponents<T_Entity, T_RestComponents...>(entity);
     }
 
+    template <typename T_Component, typename T_FirstComponent, typename... T_RestComponents>
+    static consteval uint64_t componentMaskRecurse(uint64_t id)
+    {
+        if constexpr (std::is_same_v<T_Component, T_FirstComponent>)
+            return (uint64_t)1 << id;
+        else if constexpr (sizeof...(T_RestComponents) > 0)
+            return componentMaskRecurse<T_Component, T_RestComponents...>(id+1);
+        return 0;
+    }
+
     using ComponentMover = void(ComponentPool<T_Components...>::*)(void*);
 
     std::vector<void*>                          _entityHandles;
+    std::vector<uint64_t>                       _componentMasks;
     std::vector<ComponentMover>                 _componentMovers;
     std::tuple<std::vector<T_Components>...>    _components;
 };
