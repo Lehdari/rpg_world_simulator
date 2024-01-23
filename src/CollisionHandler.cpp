@@ -37,70 +37,6 @@ void CollisionHandler::operator()(EntityId id, CollisionBody& collisionBody, Ori
     _componentPool->runSystem<CollisionSubHandler, CollisionBody, Orientation>(&_subHandler);
 }
 
-void CollisionHandler::handleCollision(NPC* npc1, NPC* npc2)
-{
-    {   // Physics collision
-        Vec2f fromOther = npc1->component<Orientation>().getPosition() - npc2->component<Orientation>().getPosition();
-        float distToOther = fromOther.norm();
-        Vec2f fromOtherUnit = fromOther / distToOther;
-
-        // Push the NPCs from inside each other
-        float overlap = npc1->component<Orientation>().getScale() + npc2->component<Orientation>().getScale() -
-            distToOther + 0.001f;
-        npc1->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
-        npc2->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
-
-        // Bounce
-        Vec2f newVelocity, otherNewVelocity;
-
-        float dot1 = npc1->_velocity.dot(fromOtherUnit);
-        Vec2f proj1 = dot1 * fromOtherUnit;
-        if (dot1 < 0.0f)
-            newVelocity = npc1->_velocity - 2.0f * proj1;
-        else
-            newVelocity = npc1->_velocity + 2.0f * proj1;
-        npc1->component<Orientation>().setRotation(atan2f(newVelocity(1), newVelocity(0)));
-
-        float dot2 = npc2->_velocity.dot(fromOtherUnit);
-        Vec2f proj2 = dot2 * fromOtherUnit;
-        if (dot2 > 0.0f)
-            otherNewVelocity = npc2->_velocity - 2.0f * proj2;
-        else
-            otherNewVelocity = npc2->_velocity + 2.0f * proj2;
-        npc2->component<Orientation>().setRotation(atan2f(otherNewVelocity(1), otherNewVelocity(0)));
-    }
-}
-
-void CollisionHandler::handleCollision(NPC* npc, Food* food)
-{
-    {   // Physics collision
-        Vec2f fromOther = npc->component<Orientation>().getPosition() - food->component<Orientation>().getPosition();
-        float distToOther = fromOther.norm();
-        Vec2f fromOtherUnit = fromOther / distToOther;
-
-        // Push the objects from inside each other
-        float overlap = npc->component<Orientation>().getScale() + food->component<Orientation>().getScale() -
-            distToOther + 0.001f;
-        npc->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
-        food->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
-    }
-}
-
-void CollisionHandler::handleCollision(Food* food1, Food* food2)
-{
-    {   // Physics collision
-        Vec2f fromOther = food1->component<Orientation>().getPosition() - food2->component<Orientation>().getPosition();
-        float distToOther = fromOther.norm();
-        Vec2f fromOtherUnit = fromOther / distToOther;
-
-        // Push the objects from inside each other
-        float overlap = food1->component<Orientation>().getScale() + food2->component<Orientation>().getScale() -
-            distToOther + 0.001f;
-        food1->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
-        food2->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
-    }
-}
-
 template<typename T_Entity1, typename T_Entity2>
 void CollisionHandler::handleCollision(void* entity1, void* entity2)
 {
@@ -118,12 +54,18 @@ void CollisionHandler::CollisionSubHandler::operator()(
     float dist = (outerOrientation->getPosition() - orientation.getPosition()).squaredNorm();
     float totalRadius = outerCollisionBody->_radius + collisionBody._radius;
     if (dist < totalRadius * totalRadius) {
-        // Call 
-        if (outerCollisionBody->_entityTypeId < collisionBody._entityTypeId)
-            CollisionHandler::_collisionCallbacks[collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES](
-                componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
-        else
-            CollisionHandler::_collisionCallbacks[outerCollisionBody->_entityTypeId + collisionBody._entityTypeId*N_ENTITY_TYPES](
-                componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
+        // Pick the collision function so that mirrored handleCollision function definitions are not needed
+        // (for example handleCollision(NPC*, Food*) and handleCollision(Food*, NPC*))
+        uint64_t functionId = outerCollisionBody->_entityTypeId < collisionBody._entityTypeId ?
+            collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES :
+            outerCollisionBody->_entityTypeId + collisionBody._entityTypeId*N_ENTITY_TYPES;
+
+        // If you're getting segfault here it's likely that you forgot to overload handleCollision for
+        // the entity types that collided
+        CollisionHandler::_collisionCallbacks[functionId](
+            componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
     }
 }
+
+// Looks weird but helps to keep the code a bit more clean as this file contains much of the abstract machinery
+#include "CollisionHandlers.cpp"
