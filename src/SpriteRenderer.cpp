@@ -118,7 +118,7 @@ void SpriteRenderer::render(const Mat3f& viewport)
     }
 }
 
-void SpriteRenderer::operator()(Sprite& sprite, Orientation& orientation)
+void SpriteRenderer::operator()(EntityId id, Sprite& sprite, Orientation& orientation)
 {
     sprite.update(*this);
 

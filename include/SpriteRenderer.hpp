@@ -11,6 +11,7 @@
 #pragma once
 
 #include "SpriteSheet.hpp"
+#include "Entity.hpp"
 
 #include <gut_utils/TypeUtils.hpp>
 #include <gut_opengl/Shader.hpp>
@@ -43,7 +44,7 @@ public:
 
     void render(const Mat3f& viewport = Mat3f::Identity());
 
-    void operator()(Sprite& sprite, Orientation& orientation);
+    void operator()(EntityId id, Sprite& sprite, Orientation& orientation);
 
     // Clear sprite memory without rendering;
     void clear();

@@ -85,13 +85,6 @@ const Mat3f& Orientation::getOrientation() const
     return _orientation;
 }
 
-bool Orientation::checkCollision(const Orientation& other) const
-{
-    float dist = (_position - other._position).squaredNorm();
-    float total_scale = _scale + other._scale;
-    return dist < total_scale * total_scale;
-}
-
 void Orientation::updateOrientation()
 {
     _orientation <<

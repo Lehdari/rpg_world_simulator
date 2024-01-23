@@ -29,6 +29,8 @@ Window::Window(
     _lastTicks              (0),
     _frameTicks             (0),
     _windowContext          (*this),
+    _collisionHandler       (&_componentPool),
+    _world                  (&_componentPool),
     _spriteSheetId          (-1)
 {
     int err;
@@ -132,7 +134,7 @@ void Window::loop(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (!_paused)
-            _world.update();
+            _world.update(&_collisionHandler);
 
 //        _creatureSystem.setStage(CreatureSystem::Stage::PROCESS_INPUTS);
 //        _ecs.runSystem(_creatureSystem);

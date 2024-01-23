@@ -26,6 +26,9 @@ NPC::NPC(EntityType&& entity, const Vec2f& position) :
     component<Sprite>().setOrigin(Vec2f(64.0f, 64.0f));
     component<Sprite>().setScale(Vec2f(1.0f/64.0f, 1.0f/64.0f));
 
+    component<CollisionBody>().setRadius(1.0f);
+    component<CollisionBody>().setEntityType<NPC>();
+
     _speed = rnd(-0.002, 0.02);
 }
 
@@ -46,38 +49,4 @@ void NPC::update(World* world)
     // Move
     _velocity = (component<Orientation>().getOrientation() * Vec3f((float)_speed, 0.0f, 0.0f)).block<2,1>(0,0);
     component<Orientation>().translate(_velocity);
-}
-
-void NPC::collision(World* world, NPC* other)
-{
-    {   // Physics collision
-        Vec2f fromOther = component<Orientation>().getPosition() - other->component<Orientation>().getPosition();
-        float distToOther = fromOther.norm();
-        Vec2f fromOtherUnit = fromOther / distToOther;
-
-        // Push the NPCs from inside each other
-        float overlap = component<Orientation>().getScale() + other->component<Orientation>().getScale() -
-            distToOther + 0.001f;
-        component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
-        other->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
-
-        // Bounce
-        Vec2f newVelocity, otherNewVelocity;
-
-        float dot1 = _velocity.dot(fromOtherUnit);
-        Vec2f proj1 = dot1 * fromOtherUnit;
-        if (dot1 < 0.0f)
-            newVelocity = _velocity - 2.0f * proj1;
-        else
-            newVelocity = _velocity + 2.0f * proj1;
-        component<Orientation>().setRotation(atan2f(newVelocity(1), newVelocity(0)));
-
-        float dot2 = other->_velocity.dot(fromOtherUnit);
-        Vec2f proj2 = dot2 * fromOtherUnit;
-        if (dot2 > 0.0f)
-            otherNewVelocity = other->_velocity - 2.0f * proj2;
-        else
-            otherNewVelocity = other->_velocity + 2.0f * proj2;
-        other->component<Orientation>().setRotation(atan2f(otherNewVelocity(1), otherNewVelocity(0)));
-    }
 }

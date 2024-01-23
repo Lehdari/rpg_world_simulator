@@ -9,48 +9,36 @@
 //
 
 #include "World.hpp"
+#include "SpriteRenderer.hpp"
+#include "CollisionHandler.hpp"
 
 
-World::World() :
-    _size   (10.0)
+World::World(ComponentPool<COMPONENT_TYPES>* componentPool) :
+    _size           (10.0),
+    _componentPool  (componentPool)
 {
     constexpr int nNPCs = 8;
     for (int i=0; i<nNPCs; ++i) {
-        _npcs.emplace_back(_componentPool.createEntity<NPC>(Vec2f(
+        _npcs.emplace_back(_componentPool->createEntity<NPC>(Vec2f(
             5.0*cos(2.0*M_PI*((float)i/nNPCs)),
             5.0*sin(2.0*M_PI*((float)i/nNPCs)))));
     }
 }
 
-void World::update()
+void World::update(CollisionHandler* collisionHandler)
 {
     for (auto& npc : _npcs)
         npc.update(this);
 
-    checkCollisions();
+    _componentPool->runSystem<CollisionHandler, CollisionBody, Orientation>(collisionHandler);
 }
 
 void World::render(SpriteRenderer* renderer)
 {
-    _componentPool.runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
+    _componentPool->runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
 }
 
 double World::getSize() const
 {
     return _size;
-}
-
-void World::checkCollisions()
-{
-    for (decltype(_npcs)::size_type i=0; i<_npcs.size(); ++i) {
-        auto& npc1 = _npcs[i];
-        for (decltype(_npcs)::size_type j=0; j<_npcs.size(); ++j) {
-            if (j >= i) continue;
-            auto& npc2 = _npcs[j];
-
-            if (npc1.component<Orientation>().checkCollision(npc2.component<Orientation>())) {
-                npc1.collision(this, &npc2);
-            }
-        }
-    }
 }

@@ -1,6 +1,6 @@
 //
 // Project: rpg_world_simulator
-// File: Components.hpp
+// File: Food.hpp
 //
 // Copyright (c) 2024 Miika 'Lehdari' Lehtimäki
 // You may use, distribute and modify this code under the terms
@@ -10,8 +10,20 @@
 
 #pragma once
 
-#include "CollisionBody.hpp"
 #include "Orientation.hpp"
 #include "Sprite.hpp"
+#include "CollisionBody.hpp"
+#include "Entity.hpp"
 
-#define COMPONENT_TYPES CollisionBody, Orientation, Sprite
+
+class World;
+
+
+class Food : public Entity<Orientation, Sprite, CollisionBody> {
+public:
+    Food(EntityType&& entity, const Vec2f& position);
+
+    void update(World* world);
+
+    friend class CollisionHandler;
+};

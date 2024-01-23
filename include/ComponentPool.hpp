@@ -45,9 +45,14 @@ public:
         constexpr auto mask = componentMask<T_SystemComponents...>();
         for (EntityId id=0; id<_entityHandles.size(); ++id) {
             if ((mask & _componentMasks[id]) == mask) {
-                (*system)(std::get<std::vector<T_SystemComponents>>(_components)[id]...);
+                (*system)(id, std::get<std::vector<T_SystemComponents>>(_components)[id]...);
             }
         }
+    }
+
+    void* getEntityHandle(EntityId id)
+    {
+        return _entityHandles[id];
     }
 
     template <typename... T_MaskComponents>
@@ -175,7 +180,11 @@ private:
             return (uint64_t)1 << id;
         else if constexpr (sizeof...(T_RestComponents) > 0)
             return componentMaskRecurse<T_Component, T_RestComponents...>(id+1);
-        return 0;
+        else
+            []<bool flag = false>() // Lambda prevents the ill-formed case with static_assert
+                { static_assert(flag, "Requested component not enabled in the ComponentPool"); }();
+
+        return 0x0000000000000000;
     }
 
     using ComponentMover = void(ComponentPool<T_Components...>::*)(void*);

@@ -12,17 +12,20 @@
 
 #include "Components.hpp"
 #include "ComponentPool.hpp"
-#include "SpriteRenderer.hpp"
 #include "NPC.hpp"
 
 #include <vector>
 
 
+class SpriteRenderer;
+class CollisionHandler;
+
+
 class World {
 public:
-    World();
+    World(ComponentPool<COMPONENT_TYPES>* componentPool);
 
-    void update();
+    void update(CollisionHandler* handler);
     void render(SpriteRenderer* renderer);
 
     double getSize() const;
@@ -30,8 +33,7 @@ public:
 private:
     double                          _size;  // radius around origin
 
-    ComponentPool<COMPONENT_TYPES>  _componentPool;
+    ComponentPool<COMPONENT_TYPES>* _componentPool;
     std::vector<NPC>                _npcs;
 
-    void checkCollisions();
 };

@@ -1,6 +1,6 @@
 //
 // Project: rpg_world_simulator
-// File: Components.hpp
+// File: CollisionBody.cpp
 //
 // Copyright (c) 2024 Miika 'Lehdari' Lehtimäki
 // You may use, distribute and modify this code under the terms
@@ -8,10 +8,15 @@
 // with this source code package.
 //
 
-#pragma once
-
 #include "CollisionBody.hpp"
-#include "Orientation.hpp"
-#include "Sprite.hpp"
 
-#define COMPONENT_TYPES CollisionBody, Orientation, Sprite
+
+CollisionBody::CollisionBody(float radius) :
+    _radius (radius)
+{
+}
+
+void CollisionBody::setRadius(float radius)
+{
+    _radius = radius;
+}

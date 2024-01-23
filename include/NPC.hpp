@@ -12,24 +12,24 @@
 
 #include "Orientation.hpp"
 #include "Sprite.hpp"
+#include "CollisionBody.hpp"
 #include "Entity.hpp"
 
 
 class SpriteRenderer;
 class World;
+class Food;
 
 
-class NPC : public Entity<Orientation, Sprite> {
+class NPC : public Entity<Orientation, Sprite, CollisionBody> {
 public:
     NPC(EntityType&& entity, const Vec2f& position);
 
     void update(World* world);
 
-    void collision(World* world, NPC* other);
-
-    friend class World;
+    friend class CollisionHandler;
 
 private:
-    double      _speed;
-    Vec2f       _velocity; // computed from _orientation and _speed
+    double  _speed;
+    Vec2f   _velocity; // computed from _orientation and _speed
 };

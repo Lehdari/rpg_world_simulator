@@ -13,6 +13,7 @@
 
 #include <Viewport.hpp>
 #include <SpriteRenderer.hpp>
+#include <CollisionHandler.hpp>
 #include <World.hpp>
 #include <string>
 #include <SDL.h>
@@ -106,24 +107,27 @@ public:
     void updateGUI();
 
 private:
-    Settings            _settings;
-    SDL_Window*         _window;
-    SDL_GLContext       _glCtx;
+    Settings                        _settings;
+    SDL_Window*                     _window;
+    SDL_GLContext                   _glCtx;
 
-    bool                _quit; // flag for quitting the application
-    bool                _paused; // flag for pausing the simulation
-    Viewport            _viewport;
-    Vec2f               _cursorPosition;
-    int                 _renderMode;
+    bool                            _quit; // flag for quitting the application
+    bool                            _paused; // flag for pausing the simulation
+    Viewport                        _viewport;
+    Vec2f                           _cursorPosition;
+    int                             _renderMode;
 
-    uint32_t            _lastTicks;
-    uint32_t            _frameTicks;
+    uint32_t                        _lastTicks;
+    uint32_t                        _frameTicks;
 
-    Window::Context     _windowContext;
+    Window::Context                 _windowContext;
 
-    SpriteRenderer      _spriteRenderer;
-    World               _world;
+    // Component pool, systems and the world
+    ComponentPool<COMPONENT_TYPES>  _componentPool;
+    SpriteRenderer                  _spriteRenderer;
+    CollisionHandler                _collisionHandler;
+    World                           _world;
 
     // Resources
-    SpriteSheetId       _spriteSheetId;
+    SpriteSheetId                   _spriteSheetId;
 };
