@@ -18,6 +18,7 @@ public:
     CollisionBody(float radius = 0.0f);
 
     void setRadius(float radius);
+    float getRadius() const;
 
     template <typename T_Entity>
     void setEntityType()

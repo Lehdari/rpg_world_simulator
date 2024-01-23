@@ -26,4 +26,7 @@ public:
     void update(World* world);
 
     friend class CollisionHandler;
+
+private:
+    double  _nutritionalValue;
 };

@@ -53,6 +53,11 @@ void CollisionHandler::CollisionSubHandler::operator()(
     if (id >= outerId)
         return;
 
+    auto* outerEntity = componentPool->getEntityHandle(outerId);
+    if (outerEntity == nullptr) return;
+    auto* entity = componentPool->getEntityHandle(id);
+    if (entity == nullptr) return;
+
     float dist = (outerOrientation->getPosition() - orientation.getPosition()).squaredNorm();
     float totalRadius = outerCollisionBody->_radius + collisionBody._radius;
     if (dist < totalRadius * totalRadius) {

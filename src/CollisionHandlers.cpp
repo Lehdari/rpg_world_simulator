@@ -66,7 +66,7 @@ void CollisionHandler::handleCollision(World* world, Food* food1, Food* food2)
         Vec2f fromOtherUnit = fromOther / distToOther;
 
         // Push the objects from inside each other
-        float overlap = food1->component<Orientation>().getScale() + food2->component<Orientation>().getScale() -
+        float overlap = food1->component<CollisionBody>().getRadius() + food2->component<CollisionBody>().getRadius() -
             distToOther + 0.001f;
         food1->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
         food2->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);

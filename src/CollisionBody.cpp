@@ -20,3 +20,8 @@ void CollisionBody::setRadius(float radius)
 {
     _radius = radius;
 }
+
+float CollisionBody::getRadius() const
+{
+    return _radius;
+}

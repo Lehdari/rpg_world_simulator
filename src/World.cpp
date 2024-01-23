@@ -18,7 +18,7 @@ World::World(ComponentPool<COMPONENT_TYPES>* componentPool) :
     _componentPool  (componentPool)
 {
     constexpr int nNPCs = 8;
-    constexpr int nFood = 24;
+    constexpr int nFood = 32;
     for (int i=0; i<nNPCs; ++i) {
         _npcs.emplace_back(_componentPool->createEntity<NPC>(Vec2f(
             5.0*cos(2.0*M_PI*((float)i/nNPCs)),
@@ -35,6 +35,9 @@ void World::update(CollisionHandler* collisionHandler)
 {
     for (auto& npc : _npcs)
         npc.update(this);
+
+    for (auto& food : _food)
+        food.update(this);
 
     _componentPool->runSystem<CollisionHandler, CollisionBody, Orientation>(collisionHandler);
 }

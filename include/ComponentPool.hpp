@@ -55,6 +55,8 @@ public:
 
     void* getEntityHandle(EntityId id)
     {
+        if (id > _entityHandles.size())
+            return nullptr;
         return _entityHandles[id];
     }
 

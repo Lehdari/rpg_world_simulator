@@ -12,19 +12,26 @@
 
 
 Food::Food(EntityType&& entity, const Vec2f& position) :
-    EntityType(std::forward<EntityType>(entity))
+    EntityType(std::forward<EntityType>(entity)),
+    _nutritionalValue   (0.15 + rnd(0.0, 0.35))
 {
+    double radius = std::sqrt(_nutritionalValue*0.25);
+
     component<Orientation>().setPosition(position);
 
     component<Sprite>().setSpriteId(1);
     component<Sprite>().setOrigin(Vec2f(64.0f, 64.0f));
-    component<Sprite>().setScale(Vec2f(1.0f/64.0f, 1.0f/64.0f));
+    component<Sprite>().setScale(Vec2f(radius/64.0f, radius/64.0f));
+    component<Sprite>().setColor(Vec3f(0.3f, 0.7f, 0.05f));
 
-    component<CollisionBody>().setRadius(1.0f);
+    component<CollisionBody>().setRadius(radius);
     component<CollisionBody>().setEntityType<Food>();
 }
 
 void Food::update(World* world)
 {
-
+    _nutritionalValue += rnd(0.0, 0.01);
+    double radius = std::sqrt(_nutritionalValue*0.25);
+    component<Sprite>().setScale(Vec2f(radius/64.0f, radius/64.0f));
+    component<CollisionBody>().setRadius(radius);
 }
