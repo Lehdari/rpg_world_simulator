@@ -74,6 +74,12 @@ public:
 
     Entity& operator=(Entity&& other)
     {
+        if (this == &other)
+            return *this;
+
+        if (_destroy != nullptr)
+            _destroy(_pool, _id);
+
         _pool       = other._pool;
         _id         = other._id;
         _components = other._components;

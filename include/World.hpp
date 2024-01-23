@@ -29,6 +29,8 @@ public:
     void update(CollisionHandler* handler);
     void render(SpriteRenderer* renderer);
 
+    void removeFood(Food* food);
+
     double getSize() const;
 
 private:
@@ -37,5 +39,4 @@ private:
     ComponentPool<COMPONENT_TYPES>* _componentPool;
     std::vector<NPC>                _npcs;
     std::vector<Food>               _food;
-
 };

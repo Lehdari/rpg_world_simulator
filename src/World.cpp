@@ -44,6 +44,12 @@ void World::render(SpriteRenderer* renderer)
     _componentPool->runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
 }
 
+void World::removeFood(Food* food)
+{
+    // This is utter carbage but it'll do for now
+    _food.erase(_food.begin() + (food - _food.data()));
+}
+
 double World::getSize() const
 {
     return _size;

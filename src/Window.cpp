@@ -29,8 +29,8 @@ Window::Window(
     _lastTicks              (0),
     _frameTicks             (0),
     _windowContext          (*this),
-    _collisionHandler       (&_componentPool),
     _world                  (&_componentPool),
+    _collisionHandler       (&_componentPool, &_world),
     _spriteSheetId          (-1)
 {
     int err;

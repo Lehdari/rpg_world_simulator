@@ -124,9 +124,9 @@ private:
 
     // Component pool, systems and the world
     ComponentPool<COMPONENT_TYPES>  _componentPool;
+    World                           _world;
     SpriteRenderer                  _spriteRenderer;
     CollisionHandler                _collisionHandler;
-    World                           _world;
 
     // Resources
     SpriteSheetId                   _spriteSheetId;

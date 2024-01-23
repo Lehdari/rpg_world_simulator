@@ -10,6 +10,7 @@
 
 #include "CollisionHandler.hpp"
 #include "ComponentPool.hpp"
+#include "World.hpp"
 #include "NPC.hpp"
 #include "Food.hpp"
 
@@ -23,10 +24,11 @@ CollisionHandler::CollisionCallBackArray CollisionHandler::_collisionCallbacks =
 }();
 
 
-CollisionHandler::CollisionHandler(ComponentPool<COMPONENT_TYPES>* componentPool) :
+CollisionHandler::CollisionHandler(ComponentPool<COMPONENT_TYPES>* componentPool, World* world) :
     _componentPool  (componentPool)
 {
     _subHandler.componentPool = componentPool;
+    _subHandler.world = world;
 }
 
 void CollisionHandler::operator()(EntityId id, CollisionBody& collisionBody, Orientation& orientation)
@@ -38,9 +40,9 @@ void CollisionHandler::operator()(EntityId id, CollisionBody& collisionBody, Ori
 }
 
 template<typename T_Entity1, typename T_Entity2>
-void CollisionHandler::handleCollision(void* entity1, void* entity2)
+void CollisionHandler::handleCollision(World* world, void* entity1, void* entity2)
 {
-    handleCollision(static_cast<T_Entity1*>(entity1), static_cast<T_Entity2*>(entity2));
+    handleCollision(world, static_cast<T_Entity1*>(entity1), static_cast<T_Entity2*>(entity2));
 }
 
 void CollisionHandler::CollisionSubHandler::operator()(
@@ -56,14 +58,21 @@ void CollisionHandler::CollisionSubHandler::operator()(
     if (dist < totalRadius * totalRadius) {
         // Pick the collision function so that mirrored handleCollision function definitions are not needed
         // (for example handleCollision(NPC*, Food*) and handleCollision(Food*, NPC*))
-        uint64_t functionId = outerCollisionBody->_entityTypeId < collisionBody._entityTypeId ?
-            collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES :
-            outerCollisionBody->_entityTypeId + collisionBody._entityTypeId*N_ENTITY_TYPES;
-
-        // If you're getting segfault here it's likely that you forgot to overload handleCollision for
-        // the entity types that collided
-        CollisionHandler::_collisionCallbacks[functionId](
-            componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
+        uint64_t functionId;
+        if (outerCollisionBody->_entityTypeId < collisionBody._entityTypeId) {
+            functionId = collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES;
+            // If you're getting segfault here it's likely that you forgot to overload handleCollision for
+            // the entity types that collided
+            CollisionHandler::_collisionCallbacks[functionId](world,
+                componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
+        }
+        else {
+            functionId = outerCollisionBody->_entityTypeId + collisionBody._entityTypeId*N_ENTITY_TYPES;
+            // If you're getting segfault here it's likely that you forgot to overload handleCollision for
+            // the entity types that collided
+            CollisionHandler::_collisionCallbacks[functionId](world,
+                componentPool->getEntityHandle(id), componentPool->getEntityHandle(outerId));
+        }
     }
 }
 

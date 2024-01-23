@@ -8,7 +8,7 @@
 // with this source code package.
 //
 
-void CollisionHandler::handleCollision(NPC* npc1, NPC* npc2)
+void CollisionHandler::handleCollision(World* world, NPC* npc1, NPC* npc2)
 {
     {   // Physics collision
         Vec2f fromOther = npc1->component<Orientation>().getPosition() - npc2->component<Orientation>().getPosition();
@@ -42,22 +42,23 @@ void CollisionHandler::handleCollision(NPC* npc1, NPC* npc2)
     }
 }
 
-void CollisionHandler::handleCollision(NPC* npc, Food* food)
+void CollisionHandler::handleCollision(World* world, NPC* npc, Food* food)
 {
-    {   // Physics collision
-        Vec2f fromOther = npc->component<Orientation>().getPosition() - food->component<Orientation>().getPosition();
-        float distToOther = fromOther.norm();
-        Vec2f fromOtherUnit = fromOther / distToOther;
-
-        // Push the objects from inside each other
-        float overlap = npc->component<Orientation>().getScale() + food->component<Orientation>().getScale() -
-            distToOther + 0.001f;
-        npc->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
-        food->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
-    }
+//    {   // Physics collision
+//        Vec2f fromOther = npc->component<Orientation>().getPosition() - food->component<Orientation>().getPosition();
+//        float distToOther = fromOther.norm();
+//        Vec2f fromOtherUnit = fromOther / distToOther;
+//
+//        // Push the objects from inside each other
+//        float overlap = npc->component<Orientation>().getScale() + food->component<Orientation>().getScale() -
+//            distToOther + 0.001f;
+//        npc->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
+//        food->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
+//    }
+    world->removeFood(food);
 }
 
-void CollisionHandler::handleCollision(Food* food1, Food* food2)
+void CollisionHandler::handleCollision(World* world, Food* food1, Food* food2)
 {
     {   // Physics collision
         Vec2f fromOther = food1->component<Orientation>().getPosition() - food2->component<Orientation>().getPosition();

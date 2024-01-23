@@ -10,6 +10,6 @@
 
 // Definitions for all collision handling functions
 // Make sure to have the types in the same order as they are listed in ENTITY_TYPES (see Entities.hpp)
-static void handleCollision(NPC* npc1, NPC* npc2);
-static void handleCollision(NPC* npc, Food* food);
-static void handleCollision(Food* food1, Food* food2);
+static void handleCollision(World* world, NPC* npc1, NPC* npc2);
+static void handleCollision(World* world, NPC* npc, Food* food);
+static void handleCollision(World* world, Food* food1, Food* food2);

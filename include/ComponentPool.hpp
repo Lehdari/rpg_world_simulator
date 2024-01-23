@@ -21,7 +21,8 @@ public:
     ComponentPool(uint64_t preallocation = 0) :
         _entityHandles      (preallocation, nullptr),
         _componentMasks     (preallocation, 0x0000000000000000),
-        _componentMovers    (preallocation, nullptr)
+        _componentMovers    (preallocation, nullptr),
+        _nRunningSystems    (0)
     {
         std::apply([this](auto&&... components) {((components.resize(_entityHandles.size())), ...);}, _components);
     }
@@ -42,12 +43,14 @@ public:
     template <typename T_System, typename... T_SystemComponents>
     void runSystem(T_System* system)
     {
+        ++_nRunningSystems;
         constexpr auto mask = componentMask<T_SystemComponents...>();
         for (EntityId id=0; id<_entityHandles.size(); ++id) {
             if ((mask & _componentMasks[id]) == mask) {
                 (*system)(id, std::get<std::vector<T_SystemComponents>>(_components)[id]...);
             }
         }
+        --_nRunningSystems;
     }
 
     void* getEntityHandle(EntityId id)
@@ -193,4 +196,5 @@ private:
     std::vector<uint64_t>                       _componentMasks;
     std::vector<ComponentMover>                 _componentMovers;
     std::tuple<std::vector<T_Components>...>    _components;
+    int64_t                                     _nRunningSystems;
 };
