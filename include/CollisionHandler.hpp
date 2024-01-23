@@ -27,8 +27,7 @@ public:
     void operator()(EntityId id, CollisionBody& collisionBody, Orientation& orientation);
 
     static void handleCollision(NPC* npc1, NPC* npc2);
-    static void handleCollision(NPC* npc1, Food* food2);
-    static void handleCollision(Food* food1, NPC* npc2);
+    static void handleCollision(NPC* npc, Food* food);
     static void handleCollision(Food* food1, Food* food2);
 
     template <typename T_Entity1, typename T_Entity2>
@@ -42,7 +41,10 @@ public:
         template<typename T_First2, typename... T_Rest2>
         static void callbacksInitializer(CollisionCallback* callback)
         {
-            *callback = handleCollision<T_First1, T_First2>;
+            if constexpr (entityTypeId<T_First1>() > entityTypeId<T_First2>())
+                *callback = nullptr;
+            else
+                *callback = handleCollision<T_First1, T_First2>;
             if constexpr (sizeof...(T_Rest2) > 0)
                 callbacksInitializer<T_Rest2...>(callback+1);
         }

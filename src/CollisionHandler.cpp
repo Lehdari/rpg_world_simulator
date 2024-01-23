@@ -11,6 +11,7 @@
 #include "CollisionHandler.hpp"
 #include "ComponentPool.hpp"
 #include "NPC.hpp"
+#include "Food.hpp"
 
 
 CollisionHandler::CollisionCallBackArray CollisionHandler::_collisionCallbacks =
@@ -70,19 +71,34 @@ void CollisionHandler::handleCollision(NPC* npc1, NPC* npc2)
     }
 }
 
-void CollisionHandler::handleCollision(NPC* npc1, Food* food2)
+void CollisionHandler::handleCollision(NPC* npc, Food* food)
 {
+    {   // Physics collision
+        Vec2f fromOther = npc->component<Orientation>().getPosition() - food->component<Orientation>().getPosition();
+        float distToOther = fromOther.norm();
+        Vec2f fromOtherUnit = fromOther / distToOther;
 
-}
-
-void CollisionHandler::handleCollision(Food* food1, NPC* npc2)
-{
-
+        // Push the objects from inside each other
+        float overlap = npc->component<Orientation>().getScale() + food->component<Orientation>().getScale() -
+            distToOther + 0.001f;
+        npc->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
+        food->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
+    }
 }
 
 void CollisionHandler::handleCollision(Food* food1, Food* food2)
 {
+    {   // Physics collision
+        Vec2f fromOther = food1->component<Orientation>().getPosition() - food2->component<Orientation>().getPosition();
+        float distToOther = fromOther.norm();
+        Vec2f fromOtherUnit = fromOther / distToOther;
 
+        // Push the objects from inside each other
+        float overlap = food1->component<Orientation>().getScale() + food2->component<Orientation>().getScale() -
+            distToOther + 0.001f;
+        food1->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
+        food2->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
+    }
 }
 
 template<typename T_Entity1, typename T_Entity2>
@@ -102,7 +118,12 @@ void CollisionHandler::CollisionSubHandler::operator()(
     float dist = (outerOrientation->getPosition() - orientation.getPosition()).squaredNorm();
     float totalRadius = outerCollisionBody->_radius + collisionBody._radius;
     if (dist < totalRadius * totalRadius) {
-        CollisionHandler::_collisionCallbacks[collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES](
-        componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
+        // Call 
+        if (outerCollisionBody->_entityTypeId < collisionBody._entityTypeId)
+            CollisionHandler::_collisionCallbacks[collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES](
+                componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
+        else
+            CollisionHandler::_collisionCallbacks[outerCollisionBody->_entityTypeId + collisionBody._entityTypeId*N_ENTITY_TYPES](
+                componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
     }
 }

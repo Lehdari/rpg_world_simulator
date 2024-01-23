@@ -14,14 +14,20 @@
 
 
 World::World(ComponentPool<COMPONENT_TYPES>* componentPool) :
-    _size           (10.0),
+    _size           (15.0),
     _componentPool  (componentPool)
 {
     constexpr int nNPCs = 8;
+    constexpr int nFood = 24;
     for (int i=0; i<nNPCs; ++i) {
         _npcs.emplace_back(_componentPool->createEntity<NPC>(Vec2f(
             5.0*cos(2.0*M_PI*((float)i/nNPCs)),
             5.0*sin(2.0*M_PI*((float)i/nNPCs)))));
+    }
+    for (int i=0; i<nFood; ++i) {
+        _food.emplace_back(_componentPool->createEntity<Food>(Vec2f(
+            10.0*cos(2.0*M_PI*((float)i/nFood)),
+            10.0*sin(2.0*M_PI*((float)i/nFood)))));
     }
 }
 

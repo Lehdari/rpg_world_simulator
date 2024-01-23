@@ -13,6 +13,7 @@
 #include "Components.hpp"
 #include "ComponentPool.hpp"
 #include "NPC.hpp"
+#include "Food.hpp"
 
 #include <vector>
 
@@ -35,5 +36,6 @@ private:
 
     ComponentPool<COMPONENT_TYPES>* _componentPool;
     std::vector<NPC>                _npcs;
+    std::vector<Food>               _food;
 
 };
