@@ -16,8 +16,7 @@
 #include <algorithm>
 
 
-NPC::NPC(EntityType&& entity, const Vec2f& position) :
-    EntityType(std::forward<EntityType>(entity))
+ENTITY_CONSTRUCTOR(NPC, const Vec2f& position)
 {
     component<Orientation>().setPosition(position);
     component<Orientation>().setRotation(rnd(0.0f, 2.0f*M_PI));

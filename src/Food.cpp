@@ -11,8 +11,7 @@
 #include "Food.hpp"
 
 
-Food::Food(EntityType&& entity, const Vec2f& position) :
-    EntityType(std::forward<EntityType>(entity)),
+ENTITY_CONSTRUCTOR(Food, const Vec2f& position),
     _nutritionalValue   (0.15 + rnd(0.0, 0.35))
 {
     double radius = std::sqrt(_nutritionalValue*0.25);

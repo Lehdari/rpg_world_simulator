@@ -14,6 +14,11 @@
 #include <tuple>
 
 
+#define ENTITY_CONSTRUCTOR(ENTITY, ...) \
+    ENTITY::ENTITY(EntityType&& entity, __VA_ARGS__) :\
+        EntityType(std::forward<EntityType>(entity))
+
+
 template <typename... T_Components>
 class ComponentPool;
 
