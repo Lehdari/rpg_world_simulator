@@ -31,5 +31,11 @@ public:
 
 private:
     double  _speed;
-    Vec2f   _velocity; // computed from _orientation and _speed
+    Vec2f   _velocity; // computed from orientation and _speed
+
+    double  _health;
+    double  _maxEnergy;
+    double  _energy;
+    double  _inventoryWeightCap; // maximum amount of weight that the NPC can carry
+    double  _foodInInventory;
 };

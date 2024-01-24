@@ -16,7 +16,7 @@ void CollisionHandler::handleCollision(World* world, NPC* npc1, NPC* npc2)
         Vec2f fromOtherUnit = fromOther / distToOther;
 
         // Push the NPCs from inside each other
-        float overlap = npc1->component<Orientation>().getScale() + npc2->component<Orientation>().getScale() -
+        float overlap = npc1->component<CollisionBody>().getRadius() + npc2->component<CollisionBody>().getRadius() -
             distToOther + 0.001f;
         npc1->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
         npc2->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
@@ -44,18 +44,46 @@ void CollisionHandler::handleCollision(World* world, NPC* npc1, NPC* npc2)
 
 void CollisionHandler::handleCollision(World* world, NPC* npc, Food* food)
 {
-//    {   // Physics collision
-//        Vec2f fromOther = npc->component<Orientation>().getPosition() - food->component<Orientation>().getPosition();
-//        float distToOther = fromOther.norm();
-//        Vec2f fromOtherUnit = fromOther / distToOther;
-//
-//        // Push the objects from inside each other
-//        float overlap = npc->component<Orientation>().getScale() + food->component<Orientation>().getScale() -
-//            distToOther + 0.001f;
-//        npc->component<Orientation>().translate(fromOtherUnit * overlap * 0.5f);
-//        food->component<Orientation>().translate(-fromOtherUnit * overlap * 0.5f);
-//    }
-    world->removeFood(food);
+    {   // Physics collision
+        Vec2f fromOther = npc->component<Orientation>().getPosition() - food->component<Orientation>().getPosition();
+        float distToOther = fromOther.norm();
+        Vec2f fromOtherUnit = fromOther / distToOther;
+
+        // Push the NPC
+        float overlap = npc->component<CollisionBody>().getRadius() + food->component<CollisionBody>().getRadius() -
+            distToOther + 0.001f;
+        npc->component<Orientation>().translate(fromOtherUnit * overlap);
+    }
+
+    double inventorySpace = npc->_inventoryWeightCap-npc->_foodInInventory;
+    if (inventorySpace > food->_nutritionalValue) {
+        // The entire food entity is picked up and stored in the inventory
+        npc->_foodInInventory += food->_nutritionalValue;
+        world->removeFood(food);
+    }
+    else {
+        // Eat pre-emptively so inventory space is freed in order to carry more food
+        if (npc->_foodInInventory > 0.0 && npc->_energy < npc->_maxEnergy) {
+            constexpr double foodToEnergyConversionRatio = 100.0;
+            double amountToEat = std::min(npc->_foodInInventory*foodToEnergyConversionRatio,
+                npc->_maxEnergy-npc->_energy) / foodToEnergyConversionRatio;
+            npc->_energy += amountToEat*foodToEnergyConversionRatio;
+            npc->_foodInInventory -= amountToEat;
+        }
+        inventorySpace = npc->_inventoryWeightCap-npc->_foodInInventory;
+
+        if (inventorySpace > food->_nutritionalValue) {
+            // The entire food entity is picked up and stored in the inventory
+            npc->_foodInInventory += food->_nutritionalValue;
+            world->removeFood(food);
+        }
+        else {
+            // Only a piece of the food entity is picked up so it fills up the entire inventory capacity
+            npc->_foodInInventory += inventorySpace;
+            food->_nutritionalValue -= inventorySpace;
+            food->updateRadius();
+        }
+    }
 }
 
 void CollisionHandler::handleCollision(World* world, Food* food1, Food* food2)

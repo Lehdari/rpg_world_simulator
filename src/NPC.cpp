@@ -16,7 +16,16 @@
 #include <algorithm>
 
 
-ENTITY_CONSTRUCTOR(NPC, const Vec2f& position)
+static constexpr double maxHealth = 100.0;
+
+
+ENTITY_CONSTRUCTOR(NPC, const Vec2f& position),
+    _speed              (rnd(-0.002, 0.02)),
+    _health             (maxHealth),
+    _maxEnergy          (100.0),
+    _energy             (_maxEnergy),
+    _inventoryWeightCap (1.0),
+    _foodInInventory    (0.0)
 {
     component<Orientation>().setPosition(position);
     component<Orientation>().setRotation(rnd(0.0f, 2.0f*M_PI));
@@ -28,7 +37,6 @@ ENTITY_CONSTRUCTOR(NPC, const Vec2f& position)
     component<CollisionBody>().setRadius(1.0f);
     component<CollisionBody>().setEntityType<NPC>();
 
-    _speed = rnd(-0.002, 0.02);
 }
 
 void NPC::update(World* world)
@@ -48,4 +56,30 @@ void NPC::update(World* world)
     // Move
     _velocity = (component<Orientation>().getOrientation() * Vec3f((float)_speed, 0.0f, 0.0f)).block<2,1>(0,0);
     component<Orientation>().translate(_velocity);
+
+    // Energy consumption
+    _energy -= 100.0*_speed*_speed;
+    if (_energy <= 0.0 && _foodInInventory > 0.0) { // eating
+        constexpr double foodToEnergyConversionRatio = 100.0;
+        double amountToEat = std::min(_foodInInventory*foodToEnergyConversionRatio, _maxEnergy) / foodToEnergyConversionRatio;
+        _energy += amountToEat*foodToEnergyConversionRatio;
+        _foodInInventory -= amountToEat;
+    }
+    if (_health < maxHealth) {
+        double delta = std::min(_energy, maxHealth-_health);
+        _health += delta;
+        _energy -= delta;
+    }
+    if (_energy <= 0.0) { // health degrades if no energy left
+        _health += _energy;
+        _energy = 0.0;
+    }
+
+    // Sprite update (cyan: max energy, max health; green: 0 energy, max health; red: 0 energy, 0 health)
+    component<Sprite>().setColor(Vec3f(std::sqrt((100.0-_health)*0.01), std::sqrt(_health*0.01), _energy / _maxEnergy));
+
+    // Death
+    if (_health <= 0.0) {
+        world->removeNPC(this);
+    }
 }

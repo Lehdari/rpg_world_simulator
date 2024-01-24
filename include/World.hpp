@@ -29,6 +29,7 @@ public:
     void update(CollisionHandler* handler);
     void render(SpriteRenderer* renderer);
 
+    void removeNPC(NPC* npc);
     void removeFood(Food* food);
 
     double getSize() const;

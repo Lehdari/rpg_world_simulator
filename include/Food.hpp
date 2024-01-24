@@ -24,6 +24,7 @@ public:
     Food(EntityType&& entity, const Vec2f& position);
 
     void update(World* world);
+    void updateRadius();
 
     friend class CollisionHandler;
 

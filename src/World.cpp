@@ -47,6 +47,12 @@ void World::render(SpriteRenderer* renderer)
     _componentPool->runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
 }
 
+void World::removeNPC(NPC* npc)
+{
+    // This is utter carbage but it'll do for now
+    _npcs.erase(_npcs.begin() + (npc - _npcs.data()));
+}
+
 void World::removeFood(Food* food)
 {
     // This is utter carbage but it'll do for now

@@ -7,6 +7,8 @@ Changes that affect the usage interface from the logic implementation point of v
   - Lot of copy-paste required for creating / removing / updating different entities
   - Perhaps a `std::tuple` of entity vectors, similar to components in `ComponentPool` would work?
 
+- Add global simulation parameters
+  - Controllable via the GUI?
 
 ## Optimization
 

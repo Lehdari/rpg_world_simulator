@@ -29,7 +29,12 @@ ENTITY_CONSTRUCTOR(Food, const Vec2f& position),
 
 void Food::update(World* world)
 {
-    _nutritionalValue += rnd(0.0, 0.01);
+    _nutritionalValue += rnd(0.0, 0.001);
+    updateRadius();
+}
+
+void Food::updateRadius()
+{
     double radius = std::sqrt(_nutritionalValue*0.25);
     component<Sprite>().setScale(Vec2f(radius/64.0f, radius/64.0f));
     component<CollisionBody>().setRadius(radius);
