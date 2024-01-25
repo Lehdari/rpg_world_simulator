@@ -14,17 +14,15 @@
 ENTITY_CONSTRUCTOR(Food, const Vec2f& position),
     _nutritionalValue   (0.05 + rnd(0.0, 0.15))
 {
-    double radius = std::sqrt(_nutritionalValue*0.25);
+    component<Label>().entityTypeId = entityTypeId<Food>();
 
     component<Orientation>().setPosition(position);
 
     component<Sprite>().setSpriteId(1);
     component<Sprite>().setOrigin(Vec2f(64.0f, 64.0f));
-    component<Sprite>().setScale(Vec2f(radius/64.0f, radius/64.0f));
     component<Sprite>().setColor(Vec3f(0.3f, 0.7f, 0.05f));
 
-    component<CollisionBody>().setRadius(radius);
-    component<CollisionBody>().setEntityType<Food>();
+    updateRadius();
 }
 
 void Food::update(World* world)

@@ -35,7 +35,7 @@ void World::update(CollisionHandler* collisionHandler)
     for (auto& food : _food)
         food.update(this);
 
-    _componentPool->runSystem<CollisionHandler, CollisionBody, Orientation>(collisionHandler);
+    _componentPool->runSystem<CollisionHandler, Label, CollisionBody, Orientation>(collisionHandler);
 }
 
 void World::render(SpriteRenderer* renderer)

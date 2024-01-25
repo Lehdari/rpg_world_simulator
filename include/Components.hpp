@@ -14,4 +14,4 @@
 #include "Orientation.hpp"
 #include "Sprite.hpp"
 
-#define COMPONENT_TYPES CollisionBody, Orientation, Sprite
+#define COMPONENT_TYPES Label, CollisionBody, Orientation, Sprite

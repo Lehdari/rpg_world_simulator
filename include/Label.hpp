@@ -1,6 +1,6 @@
 //
 // Project: rpg_world_simulator
-// File: CollisionBody.hpp
+// File: Label.hpp
 //
 // Copyright (c) 2024 Miika 'Lehdari' Lehtimäki
 // You may use, distribute and modify this code under the terms
@@ -10,16 +10,10 @@
 
 #pragma once
 
+#include "Entities.hpp"
 
-class CollisionBody {
-public:
-    CollisionBody(float radius = 0.0f);
 
-    void setRadius(float radius);
-    float getRadius() const;
-
-    friend class CollisionHandler;
-
-private:
-    float   _radius;
+// Component for identifying entities
+struct Label {
+    TypeId  entityTypeId;
 };

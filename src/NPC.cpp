@@ -27,6 +27,8 @@ ENTITY_CONSTRUCTOR(NPC, const Vec2f& position),
     _inventoryWeightCap (1.0),
     _foodInInventory    (0.0)
 {
+    component<Label>().entityTypeId = entityTypeId<NPC>();
+
     component<Orientation>().setPosition(position);
     component<Orientation>().setRotation(rnd<float>(0.0f, 2.0f*M_PI));
 
@@ -35,8 +37,6 @@ ENTITY_CONSTRUCTOR(NPC, const Vec2f& position),
     component<Sprite>().setScale(Vec2f(1.0f/64.0f, 1.0f/64.0f));
 
     component<CollisionBody>().setRadius(1.0f);
-    component<CollisionBody>().setEntityType<NPC>();
-
 }
 
 void NPC::update(World* world)

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "Label.hpp"
 #include "Orientation.hpp"
 #include "Sprite.hpp"
 #include "CollisionBody.hpp"
@@ -19,7 +20,7 @@
 class World;
 
 
-class Food : public Entity<Orientation, Sprite, CollisionBody> {
+class Food : public Entity<Label, Orientation, Sprite, CollisionBody> {
 public:
     Food(EntityType&& entity, const Vec2f& position);
 

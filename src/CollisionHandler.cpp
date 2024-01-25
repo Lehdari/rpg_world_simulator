@@ -31,12 +31,13 @@ CollisionHandler::CollisionHandler(ComponentPool<COMPONENT_TYPES>* componentPool
     _subHandler.world = world;
 }
 
-void CollisionHandler::operator()(EntityId id, CollisionBody& collisionBody, Orientation& orientation)
+void CollisionHandler::operator()(EntityId id, Label& label, CollisionBody& collisionBody, Orientation& orientation)
 {
     _subHandler.outerId = id;
+    _subHandler.outerLabel = &label;
     _subHandler.outerCollisionBody = &collisionBody;
     _subHandler.outerOrientation = &orientation;
-    _componentPool->runSystem<CollisionSubHandler, CollisionBody, Orientation>(&_subHandler);
+    _componentPool->runSystem<CollisionSubHandler, Label, CollisionBody, Orientation>(&_subHandler);
 }
 
 template<typename T_Entity1, typename T_Entity2>
@@ -47,6 +48,7 @@ void CollisionHandler::handleCollision(World* world, void* entity1, void* entity
 
 void CollisionHandler::CollisionSubHandler::operator()(
     EntityId id,
+    Label& label,
     CollisionBody& collisionBody,
     Orientation& orientation
 ) {
@@ -64,15 +66,15 @@ void CollisionHandler::CollisionSubHandler::operator()(
         // Pick the collision function so that mirrored handleCollision function definitions are not needed
         // (for example handleCollision(NPC*, Food*) and handleCollision(Food*, NPC*))
         uint64_t functionId;
-        if (outerCollisionBody->_entityTypeId < collisionBody._entityTypeId) {
-            functionId = collisionBody._entityTypeId + outerCollisionBody->_entityTypeId*N_ENTITY_TYPES;
+        if (outerLabel->entityTypeId < label.entityTypeId) {
+            functionId = label.entityTypeId + outerLabel->entityTypeId*N_ENTITY_TYPES;
             // If you're getting segfault here it's likely that you forgot to overload handleCollision for
             // the entity types that collided
             CollisionHandler::_collisionCallbacks[functionId](world,
                 componentPool->getEntityHandle(outerId), componentPool->getEntityHandle(id));
         }
         else {
-            functionId = outerCollisionBody->_entityTypeId + collisionBody._entityTypeId*N_ENTITY_TYPES;
+            functionId = outerLabel->entityTypeId + label.entityTypeId*N_ENTITY_TYPES;
             // If you're getting segfault here it's likely that you forgot to overload handleCollision for
             // the entity types that collided
             CollisionHandler::_collisionCallbacks[functionId](world,

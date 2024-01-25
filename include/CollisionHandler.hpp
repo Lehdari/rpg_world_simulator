@@ -15,6 +15,7 @@
 #include "Entities.hpp"
 
 
+class Label;
 class Orientation;
 class CollisionBody;
 template <typename... T_Components> class ComponentPool;
@@ -25,7 +26,7 @@ class CollisionHandler {
 public:
     CollisionHandler(ComponentPool<COMPONENT_TYPES>* componentPool, World* world);
 
-    void operator()(EntityId id, CollisionBody& collisionBody, Orientation& orientation);
+    void operator()(EntityId id, Label& label, CollisionBody& collisionBody, Orientation& orientation);
 
     #include "CollisionHandlers.inl"
 
@@ -74,10 +75,11 @@ private:
         ComponentPool<COMPONENT_TYPES>* componentPool;
         World*                          world;
         EntityId                        outerId;
+        Label*                          outerLabel;
         CollisionBody*                  outerCollisionBody;
         Orientation*                    outerOrientation;
 
-        void operator()(EntityId id, CollisionBody& collisionBody, Orientation& orientation);
+        void operator()(EntityId id, Label& label, CollisionBody& collisionBody, Orientation& orientation);
     };
 
     ComponentPool<COMPONENT_TYPES>* _componentPool;
