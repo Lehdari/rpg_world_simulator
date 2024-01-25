@@ -12,7 +12,7 @@
 
 
 ENTITY_CONSTRUCTOR(Food, const Vec2f& position),
-    _nutritionalValue   (0.15 + rnd(0.0, 0.35))
+    _nutritionalValue   (0.05 + rnd(0.0, 0.15))
 {
     double radius = std::sqrt(_nutritionalValue*0.25);
 
@@ -29,7 +29,8 @@ ENTITY_CONSTRUCTOR(Food, const Vec2f& position),
 
 void Food::update(World* world)
 {
-    _nutritionalValue += rnd(0.0, 0.001);
+    if (_nutritionalValue < 2.0)
+        _nutritionalValue += rnd(0.0, 0.001);
     updateRadius();
 }
 

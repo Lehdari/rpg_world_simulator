@@ -28,7 +28,7 @@ ENTITY_CONSTRUCTOR(NPC, const Vec2f& position),
     _foodInInventory    (0.0)
 {
     component<Orientation>().setPosition(position);
-    component<Orientation>().setRotation(rnd(0.0f, 2.0f*M_PI));
+    component<Orientation>().setRotation(rnd<float>(0.0f, 2.0f*M_PI));
 
     component<Sprite>().setSpriteId(0);
     component<Sprite>().setOrigin(Vec2f(64.0f, 64.0f));

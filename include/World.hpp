@@ -31,6 +31,7 @@ public:
 
     void removeNPC(NPC* npc);
     void removeFood(Food* food);
+    void spawnFood();
 
     double getSize() const;
 
