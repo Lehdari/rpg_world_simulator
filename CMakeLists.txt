@@ -8,6 +8,7 @@ add_subdirectory(ext)
 set(RPG_WORLD_SIMULATOR_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CollisionBody.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CollisionHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/EntityFinder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/FileUtils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Food.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Orientation.cpp

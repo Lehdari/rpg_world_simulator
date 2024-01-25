@@ -14,12 +14,12 @@
 
 
 World::World(ComponentPool<COMPONENT_TYPES>* componentPool) :
-    _size           (15.0),
-    _componentPool  (componentPool)
+    componentPool   (componentPool),
+    _size           (15.0)
 {
     constexpr int nNPCs = 8;
     for (int i=0; i<nNPCs; ++i) {
-        _npcs.emplace_back(_componentPool->createEntity<NPC>(Vec2f(
+        _npcs.emplace_back(componentPool->createEntity<NPC>(Vec2f(
             5.0*cos(2.0*M_PI*((float)i/nNPCs)),
             5.0*sin(2.0*M_PI*((float)i/nNPCs)))));
     }
@@ -35,12 +35,12 @@ void World::update(CollisionHandler* collisionHandler)
     for (auto& food : _food)
         food.update(this);
 
-    _componentPool->runSystem<CollisionHandler, Label, CollisionBody, Orientation>(collisionHandler);
+    componentPool->runSystem<CollisionHandler, Label, CollisionBody, Orientation>(collisionHandler);
 }
 
 void World::render(SpriteRenderer* renderer)
 {
-    _componentPool->runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
+    componentPool->runSystem<SpriteRenderer, Sprite, Orientation>(renderer);
 }
 
 void World::removeNPC(NPC* npc)
@@ -72,7 +72,7 @@ void World::spawnFood()
             p << rnd((float)-_size, (float)_size), rnd((float)-_size, (float)_size);
         while (p.squaredNorm() > _size*_size);
 
-        _food.emplace_back(_componentPool->createEntity<Food>(p));
+        _food.emplace_back(componentPool->createEntity<Food>(p));
     }
     if (rnd(0.0, 1.0) < nNewFood-static_cast<double>(nNewFoodDiscrete)) {
         Vec2f p;
@@ -80,8 +80,17 @@ void World::spawnFood()
             p << rnd((float)-_size, (float)_size), rnd((float)-_size, (float)_size);
         while (p.squaredNorm() > _size*_size);
 
-        _food.emplace_back(_componentPool->createEntity<Food>(p));
+        _food.emplace_back(componentPool->createEntity<Food>(p));
     }
+}
+
+void World::getEntitiesWithinRadius(const Vec2f& point, double radius,
+    std::vector<std::pair<EntityId, TypeId>>* entityHandles)
+{
+    _entityFinder.point = point;
+    _entityFinder.radius = radius;
+    _entityFinder.entityHandles = entityHandles;
+    componentPool->runSystem<EntityFinder, Label, Orientation>(&_entityFinder);
 }
 
 double World::getSize() const

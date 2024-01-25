@@ -41,12 +41,37 @@ ENTITY_CONSTRUCTOR(NPC, const Vec2f& position),
 
 void NPC::update(World* world)
 {
-    // Random movement (for now)
-    _speed = std::clamp(_speed+rnd(-0.001, 0.0011), -0.005, 0.05);
-    component<Orientation>().rotate(rnd(-0.01, 0.01));
+    auto& position = component<Orientation>().getPosition();
+
+    // Find nearest food
+    static std::vector<std::pair<EntityId, TypeId>> nearbyEntities;
+    nearbyEntities.clear();
+    world->getEntitiesWithinRadius(position, 4.0, &nearbyEntities);
+    float distanceSqrToNearest = -1.0f;
+    Food* nearestFood = nullptr;
+    for (const auto& eInfo : nearbyEntities) {
+        if (eInfo.second == entityTypeId<Food>()) {
+            auto food = static_cast<Food*>(world->componentPool->getEntityHandle(eInfo.first));
+            float distanceSqr = (food->component<Orientation>().getPosition() - position).squaredNorm();
+            if (distanceSqrToNearest < 0.0f || distanceSqr < distanceSqrToNearest) {
+                nearestFood = food;
+                distanceSqrToNearest = distanceSqr;
+            }
+        }
+    }
+
+    _speed = std::clamp(_speed + rnd(-0.001, 0.0011), -0.005, 0.05);
+    if (nearestFood == nullptr) {
+        // Random movement (for now)
+        component<Orientation>().rotate(rnd(-0.05, 0.05));
+    }
+    else {
+        // Move towards the nearest food
+        Vec2f toFood = nearestFood->component<Orientation>().getPosition() - position;
+        component<Orientation>().setRotation(atan2(toFood(1), toFood(0)));
+    }
 
     // Collision check with world boundary
-    auto& position = component<Orientation>().getPosition();
     if (position.squaredNorm() >= world->getSize()*world->getSize()) {
         component<Orientation>().setRotation(atan2f(-position(1), -position(0))); // turn towards origin
         if (_speed <= 0.0)

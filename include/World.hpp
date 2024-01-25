@@ -14,6 +14,7 @@
 #include "ComponentPool.hpp"
 #include "NPC.hpp"
 #include "Food.hpp"
+#include "EntityFinder.hpp"
 
 #include <vector>
 
@@ -33,12 +34,17 @@ public:
     void removeFood(Food* food);
     void spawnFood();
 
+    void getEntitiesWithinRadius(const Vec2f& point, double radius,
+        std::vector<std::pair<EntityId, TypeId>>* entityHandles);
     double getSize() const;
+
+    ComponentPool<COMPONENT_TYPES>* componentPool;
 
 private:
     double                          _size;  // radius around origin
 
-    ComponentPool<COMPONENT_TYPES>* _componentPool;
     std::vector<NPC>                _npcs;
     std::vector<Food>               _food;
+
+    EntityFinder                    _entityFinder;
 };
