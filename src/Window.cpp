@@ -108,7 +108,7 @@ void Window::init(void)
 {
     _spriteRenderer.init();
     _spriteRenderer.setWindowSize((int)_settings.window.width, (int)_settings.window.height);
-    _spriteSheetId = _spriteRenderer.addSpriteSheetFromFile(assetsDir / "sprites/sprites.png", 128, 128);
+    _spriteSheetId = _spriteRenderer.addSpriteSheetFromFile((assetsDir / "sprites/sprites.png").string(), 128, 128);
 
 //    fug::SpriteComponent creatureSpriteComponent(_spriteSheetId, 0);
 //    creatureSpriteComponent.setOrigin(Vec2f(ConfigSingleton::spriteRadius, ConfigSingleton::spriteRadius));

@@ -39,7 +39,7 @@ SpriteRenderer::~SpriteRenderer()
 
 void SpriteRenderer::init()
 {
-    _shader.load(shaderDir / "VS_Sprite.glsl", shaderDir / "FS_Sprite.glsl");
+    _shader.load((shaderDir / "VS_Sprite.glsl").string(), (shaderDir / "FS_Sprite.glsl").string());
 
     //  create and bind the VAO
     glGenVertexArrays(1, &_vertexArrayObjectId);
