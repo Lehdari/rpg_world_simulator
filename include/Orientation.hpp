@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <gut_utils/MathTypes.hpp>
+#include <gut_utils/MathUtils.hpp>
 
 
 class Orientation {

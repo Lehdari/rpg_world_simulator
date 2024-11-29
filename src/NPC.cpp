@@ -30,7 +30,7 @@ ENTITY_CONSTRUCTOR(NPC, const Vec2f& position),
     component<Label>().entityTypeId = entityTypeId<NPC>();
 
     component<Orientation>().setPosition(position);
-    component<Orientation>().setRotation(rnd<float>(0.0f, 2.0f*M_PI));
+    component<Orientation>().setRotation(rnd<float>(0.0f, 2.0f*PI));
 
     component<Sprite>().setSpriteId(0);
     component<Sprite>().setOrigin(Vec2f(64.0f, 64.0f));

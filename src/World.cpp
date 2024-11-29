@@ -20,8 +20,8 @@ World::World(ComponentPool<COMPONENT_TYPES>* componentPool) :
     constexpr int nNPCs = 8;
     for (int i=0; i<nNPCs; ++i) {
         _npcs.emplace_back(componentPool->createEntity<NPC>(Vec2f(
-            5.0*cos(2.0*M_PI*((float)i/nNPCs)),
-            5.0*sin(2.0*M_PI*((float)i/nNPCs)))));
+            5.0*cos(2.0*PI*((float)i/nNPCs)),
+            5.0*sin(2.0*PI*((float)i/nNPCs)))));
     }
 }
 
@@ -57,11 +57,11 @@ void World::removeFood(Food* food)
 
 void World::spawnFood()
 {
-    size_t maxFood = static_cast<size_t>((M_PI*_size*_size) / (5*5));
+    size_t maxFood = static_cast<size_t>((PI*_size*_size) / (5*5));
     if (_food.size() >= maxFood)
         return;
 
-    double nNewFood = rnd(0.0, (M_PI*_size*_size)/(64*64));
+    double nNewFood = rnd(0.0, (PI*_size*_size)/(64*64));
     long nNewFoodDiscrete = static_cast<long>(nNewFood);
     for (long i=0; i<nNewFoodDiscrete; ++i) {
         if (_food.size() >= maxFood)
